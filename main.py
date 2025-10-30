@@ -262,9 +262,9 @@ if __name__ == "__main__":
         sentences.extend(df["cleaned_text"].astype(str).str.split().tolist()) 
     
     Path("embeddings").mkdir(exist_ok=True) 
-    w2v = Word2Vec(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, negative=10, epochs=10) 
+    w2v = Word2Vec(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, negative=10, epochs=10, seed=42) 
     w2v.save("embeddings/word2vec.model") 
-    ft  = FastText(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, min_n=3, max_n=6, epochs=10) 
+    ft  = FastText(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, min_n=3, max_n=6, epochs=10, seed=42) 
     ft.save("embeddings/fasttext.model") 
     print("Saved embeddings.")
 
@@ -304,9 +304,68 @@ if __name__ == "__main__":
     for w in seed_words: 
         print(f"  W2V NN for '{w}':", neighbors(w2v, w)) 
         print(f"  FT  NN for '{w}':", neighbors(ft,  w)) 
-    
-    # (Optional) domain drift if you train domain-specific models separately: 
-    # drift(word, model_a, model_b) = 1 - cos(vec_a, vec_b)
+
+    # --- Optional: Domain Drift Analysis ---
+    print("\n==  Domain Drift Analysis ==")
+    print("Splitting corpus_all.txt by domain for analysis...")
+
+    domain_sentences = {
+        "news": [],
+        "reviews": [],
+        "social": [],
+        "general": []
+    }
+
+    try:
+        with open("corpus_all.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line: continue
+                
+                parts = line.split(maxsplit=1)
+                if len(parts) < 2: continue
+                    
+                domain_tag = parts[0]
+                text_tokens = parts[1].split()
+                
+                if domain_tag == "domnews":
+                    domain_sentences["news"].append(text_tokens)
+                elif domain_tag == "domreviews":
+                    domain_sentences["reviews"].append(text_tokens)
+                elif domain_tag == "domsocial":
+                    domain_sentences["social"].append(text_tokens)
+                elif domain_tag == "domgeneral":
+                    domain_sentences["general"].append(text_tokens)
+
+        print("Training temporary domain-specific models (News vs Reviews)...")
+
+        # Trying to capture more words using 'min_count=2'.
+        w2v_news = Word2Vec(sentences=domain_sentences["news"], vector_size=100, window=5, min_count=2, sg=1, epochs=10, seed=42)
+        w2v_reviews = Word2Vec(sentences=domain_sentences["reviews"], vector_size=100, window=5, min_count=2, sg=1, epochs=10, seed=42)
+        print("Temporary models trained.")
+
+        def drift(word, model_a, model_b):
+            try:
+                vec_a = model_a.wv[word]
+                vec_b = model_b.wv[word]
+                return 1 - cos(vec_a, vec_b) 
+            except KeyError:
+                return float('nan') 
+
+        print("\n== Domain Drift Scores (News vs Reviews) ==")
+
+        # We can also add lemmatized words like 'et', 'bəyən', 'get' to see their drift scores
+        drift_test_words = seed_words + ["et", "bəyən", "get"]
+
+        for word in drift_test_words:
+            drift_score = drift(word, w2v_news, w2v_reviews)
+            if not pd.isna(drift_score):
+                print(f"Drift for '{word}': {drift_score:.4f}")
+
+    except FileNotFoundError:
+        print("Could not run Domain Drift analysis: corpus_all.txt not found.")
+    except Exception as e:
+        print(f"Could not run Domain Drift analysis: {e}")
 
 
 
