@@ -262,9 +262,9 @@ if __name__ == "__main__":
         sentences.extend(df["cleaned_text"].astype(str).str.split().tolist()) 
     
     Path("embeddings").mkdir(exist_ok=True) 
-    w2v = Word2Vec(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, negative=10, epochs=10, seed=42) 
+    w2v = Word2Vec(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, negative=10, epochs=10) 
     w2v.save("embeddings/word2vec.model") 
-    ft  = FastText(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, min_n=3, max_n=6, epochs=10, seed=42) 
+    ft  = FastText(sentences=sentences, vector_size=300, window=5, min_count=3, sg=1, min_n=3, max_n=6, epochs=10) 
     ft.save("embeddings/fasttext.model") 
     print("Saved embeddings.")
 
@@ -340,8 +340,8 @@ if __name__ == "__main__":
         print("Training temporary domain-specific models (News vs Reviews)...")
 
         # Trying to capture more words using 'min_count=2'.
-        w2v_news = Word2Vec(sentences=domain_sentences["news"], vector_size=100, window=5, min_count=2, sg=1, epochs=10, seed=42)
-        w2v_reviews = Word2Vec(sentences=domain_sentences["reviews"], vector_size=100, window=5, min_count=2, sg=1, epochs=10, seed=42)
+        w2v_news = Word2Vec(sentences=domain_sentences["news"], vector_size=100, window=5, min_count=2, sg=1, epochs=10)
+        w2v_reviews = Word2Vec(sentences=domain_sentences["reviews"], vector_size=100, window=5, min_count=2, sg=1, epochs=10)
         print("Temporary models trained.")
 
         def drift(word, model_a, model_b):
