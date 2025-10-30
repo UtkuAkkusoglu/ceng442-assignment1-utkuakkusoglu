@@ -39,7 +39,45 @@ TOKEN_RE = re.compile(
 EMO_MAP = {"🙂":"EMO_POS","😃":"EMO_POS","😍":"EMO_POS","😊":"EMO_POS","👍":"EMO_POS",
            "☹":"EMO_NEG","🙁":"EMO_NEG","😠":"EMO_NEG","😡":"EMO_NEG","👎":"EMO_NEG"}
 
-SLANG_MAP = {"slm":"salam","tmm":"tamam","sagol":"sağol","cox":"çox","yaxsi":"yaxşı"}
+SLANG_MAP = {
+    "sim":"salam", "tmm":"tamam", "sagol":"sağol", "cox":"çox", "yaxsi":"yaxşı",
+    
+    # Matching Commonly Inflected Words to Their Roots 
+    "yaxşıdır": "yaxşı",
+    "yaxşıdı": "yaxşı",
+    "yaxşıyam": "yaxşı",
+    "pisdir": "pis",
+    "pisdi": "pis",
+    "gözəldir": "gözəl",
+    "gözəldi": "gözəl",
+    "əla": "əla",
+    "əladır": "əla",
+    "bahalıdır": "bahalı",
+    "ucuzdur": "ucuz",
+    
+    # Common Verbs
+    "gedir": "get",
+    "gəlir": "gəl",
+    "deyir": "de",
+    "edir": "et",
+    "bilir": "bil",
+    "olur": "ol",
+    "gəldi": "gəl",
+    "getdi": "get",
+    "etdi": "et",
+    "oldu": "ol",
+    "bəyəndim": "bəyən",
+    "bəyənirəm": "bəyən",
+    "sevirdim": "sev",
+    "sevirəm": "sev",
+    "istəyirəm": "istə",
+    "istədim": "istə",
+    "aldım": "al",
+    "aldıq": "al",
+    "verdilər": "ver",
+    "gördüm": "gör"
+}
+
 NEGATORS  = {"yox","deyil","heç","qətiyyən","yoxdur"}
 
 # Domain helpers (paste from Section 6)
