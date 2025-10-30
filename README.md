@@ -12,7 +12,7 @@ Setting the neutral value to 0.5 is a standard practice for mapping emotion onto
 2) The preprocessing pipeline was created by applying the normalize_text_az() method to all texts. Rules:
 - Emojis have been replaced with emotion labels EMO_POS and EMO_NEG (e.g. 👍 --> EMO_POS, 👎 --> EMO_NEG).
 - Fixed character encoding errors with ftfy library.
-- Stripped all HTML tags (e.g., <p>) and unescaped HTML entities (e.g., &amp --> &).
+- Stripped all HTML tags and unescaped HTML entities (e.g., &amp --> &).
 - Replaced URLs, emails, phone numbers, and user mentions with special tokens as URL, EMAIL, PHONE, USER respectively.
 - The # sign was removed from hashtags, their text was preserved but split into camelCase (e.g. #QarabagIsBack --> qarabag is back).
 - Applied Azerbaijani-specific lowercase rules (e.g., İ→i, I→ı).
